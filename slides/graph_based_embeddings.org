@@ -1,0 +1,162 @@
+#+startup: beamer
+#+LaTeX_CLASS: beamer
+#+LaTeX_CLASS_OPTIONS: [bigger]
+#+OPTIONS: H:1
+#+COLUMNS: %40ITEM %10BEAMER_env(Env) %9BEAMER_envargs(Env Args) %4BEAMER_col(Col) %10BEAMER_extra(Extra)
+#+BEAMER_THEME: Madrid
+#+options: ':nil *:t -:t ::t <:t  \n:nil ^:t arch:headline
+#+options: author:t broken-links:nil c:nil creator:nil
+#+options: d:(not "LOGBOOK") date:t e:t email:nil f:t inline:t num:t
+#+options: p:nil pri:nil prop:nil stat:t tags:t tasks:t tex:t
+#+options: timestamp:t title:t toc:nil todo:t |:t
+#+title: Graph-based embeddings in mOWL
+#+date: <2023-02-13>
+#+author: Fernando Zhapa-Camacho
+#+email: fernando.zhapacamacho@kaust.edu.sa
+#+language: en
+#+select_tags: export
+#+exclude_tags: noexport
+#+creator: Emacs 27.1 (Org mode 9.3)
+
+* Introduction
+
+Ontologies axioms are divided into: ABox
+
+assertions of the world
+- ~Father(Jhon)~
+- ~hasChild(Jhon, Mary)~
+
+* Introduction
+
+Ontologies axioms are divided into: RBox
+
+- relationships between roles:
+- ~is_part_of~ inverseOf ~has_part~
+- ~negatively_regulates subpPropertyOf regulates~
+
+* Introduction
+
+Ontologies axioms are divided into: TBox
+                                                         
+- Concept descriptions
+- ~Mother subClassOf Person~
+
+* Graphs from ontologies
+
+- <1-> ABox and RBox can be easily transformed into a Knowledge Graph
+- <2-> What about the TBox?
+- <3-> Multiple methods to /project/ an ontology into a graph
+- <4> None of them is perfect, there is loss of information
+
+* Methods implemented in mOWL
+
+\centering Taxonomy
+- Only parses axioms of the form $C \sqsubseteq D$
+- $C,D$ are atomic concepts
+- Graphs represent the hierarchy of concepts
+
+#+CAPTION: Family ontology representation
+#+NAME: fig.ont_repr
+#+ATTR_ORG: :width 400
+#+ATTR_LATEX: :width 10cm
+[[../notebooks/figs/mowl_intro/family_prot.png]]
+
+
+* Methods implemented in mOWL
+
+
+\centering DL2Vec
+
+#+CAPTION: DL2Vec projection rules
+#+NAME: fig.ont_repr
+#+ATTR_ORG: :width 400
+#+ATTR_LATEX: :height 4cm
+[[../notebooks/figs/graphs/dl2vec.jpg]]
+
+
+
+
+* Methods implemented in mOWL
+\centering OWL2Vec*
+
+
+#+CAPTION: OWL2Vec* projection rules
+#+NAME: fig.ont_repr
+#+ATTR_ORG: :width 400
+#+ATTR_LATEX: :height 5cm
+[[../notebooks/figs/graphs/owl2vec.jpg]]
+
+
+* We have graphs. Next step?
+
+- Ontology has been transformed into a graph
+- Graphs as input for a machine learning model
+- mOWL supports two ways to /embed/ a graph:
+  - Random-walk based embeddings
+  - Translational models (and more)
+
+* Embedding with random walks
+
+** Random walks                                                    :B_column:
+:PROPERTIES:
+:BEAMER_env: column
+:BEAMER_COL: 0.5
+:END:
+
+#+CAPTION: Random walks
+#+NAME: fig.ont_repr
+#+ATTR_ORG: :width 400
+#+ATTR_LATEX: :height 5cm
+[[../notebooks/figs/graphs/random_walks.jpg]]
+
+** Random walks 2                                                  :B_column:
+:PROPERTIES:
+:BEAMER_env: column
+:BEAMER_COL: 0.5
+:END:
+
+#+CAPTION: Sequences generated
+#+NAME: fig.ont_repr
+#+ATTR_ORG: :width 400
+#+ATTR_LATEX: :height 3cm
+[[../notebooks/figs/graphs/rw_sentences.jpg]]
+
+
+* Embedding with random walks
+
+- Generated sentences become input in a language processing model:
+  - Word2Vec
+  - Transformers
+
+
+* Translational models (and more)
+
+- Graphs are composed by triples $head, relation, tail$
+- Translational models consider $relation$ to be a *translation* operation between $head$ and tail
+
+  $$h + r \approx t$$
+
+- The /score/ of a triple is given by $d(h,r,t)=||h+r-t||$, where the lower
+  $d$ is, the more plausible the triple to hold true.
+
+
+* Translational models
+
+- TransE is the most representative model.
+
+  $$ \mathcal{L}= \left[\gamma+d(\boldsymbol{h}+\boldsymbol{r},
+  \boldsymbol{t})-d\left(\boldsymbol{h}+\boldsymbol{r},
+  \boldsymbol{t}^{\prime}\right)\right]_{+} $$
+
+- $d(\boldsymbol{h}+\boldsymbol{r},
+  \boldsymbol{t})$ is the score of a /positive/ triple
+
+- $d\left(\boldsymbol{h}+\boldsymbol{r},
+  \boldsymbol{t}^{\prime}\right)$ is the score of a /negative/ triple
+
+- $\gamma$ is a margin parameter
+
+
+* Translational models
+
+- Other models have appeared by changing   $$h + r \approx t$$ into   $$f(h) + f(r) \approx f(t)$$
