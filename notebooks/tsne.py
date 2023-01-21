@@ -46,11 +46,12 @@ class TSNE(MTSNE):
         if thickness is None:
             thickness = self.thickness
             
-        fig, ax = plt.subplots(figsize=(20, 20))
+        fig, ax = plt.subplots(figsize=(15, 15))
 
         for label, (xs, ys) in self.plot_data.items():
             color = self.class_color_dict[label]
-            ax.scatter(xs, ys, color=color, label=label, s=thickness) 
+            ax.scatter(xs, ys, color=color, label=label, s=thickness)
+            ax.text(xs[0]+0.5, ys[0]+0.5, label, fontsize=12)
 
             ax.legend()
             ax.grid(True)
