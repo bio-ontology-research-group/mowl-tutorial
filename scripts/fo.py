@@ -27,6 +27,7 @@ def main():
     axioms.add(adapter.create_subclass_of(parent, person))
     axioms.add(adapter.create_subclass_of(mother, female))
     axioms.add(adapter.create_subclass_of(father, male))
+    axioms.add(adapter.create_disjoint_classes(male, female))
     parent_and_male = adapter.create_object_intersection_of(parent, male)
     axioms.add(adapter.create_subclass_of(parent_and_male, father))
     parent_and_female = adapter.create_object_intersection_of(parent, female)
